@@ -46,6 +46,18 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://sage-souffle-a376ca.netlify.app",
+    ],
+    credentials: true,
+  })
+);
+
 // Test route
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
