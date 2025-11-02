@@ -28,8 +28,12 @@ const productSchema = new mongoose.Schema({
     min: [0, "Stock cannot be negative"],
     default: 0,
   },
+  materials: {
+    type: String,
+    default: "",
+  },
   images: {
-    type: [String], // Array of strings
+    type: [String],
     required: true,
     default: [],
   },
