@@ -1,20 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middleware/auth");
-const upload = require("../config/multer"); // ✅ ADD THIS
+const upload = require("../middleware/upload"); // Cloudinary upload
+const Product = require("../models/Product");
 const {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  reorderProductImages, // ✅ Add this
+  reorderProductImages,
 } = require("../controllers/productController");
 
+// Get all products
 router.get("/", getProducts);
+
+// Get single product
 router.get("/:id", getProductById);
-router.post("/", protect, upload.array("images", 5), createProduct);
-router.post("/", auth, upload.single("image"), async (req, res) => {
+
+// Create product with Cloudinary
+router.post("/", protect, upload.single("image"), async (req, res) => {
   try {
     const { name, description, price, category, stock } = req.body;
 
@@ -27,7 +32,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
       price,
       category,
       stock,
-      image: imageUrl, // This is now the Cloudinary URL
+      image: imageUrl,
       artisan: req.user.id,
     });
 
@@ -38,9 +43,9 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-// ✅ UPDATED
-router.put("/:id", protect, updateProduct);
-router.put("/:id", auth, upload.single("image"), async (req, res) => {
+
+// Update product with Cloudinary
+router.put("/:id", protect, upload.single("image"), async (req, res) => {
   try {
     const { name, description, price, category, stock } = req.body;
 
@@ -68,8 +73,10 @@ router.put("/:id", auth, upload.single("image"), async (req, res) => {
   }
 });
 
+// Delete product
 router.delete("/:id", protect, deleteProduct);
-// Add this line with other routes
+
+// Reorder images
 router.put("/:id/reorder-images", protect, reorderProductImages);
 
 module.exports = router;
