@@ -28,12 +28,11 @@ const productSchema = new mongoose.Schema({
     min: [0, "Stock cannot be negative"],
     default: 0,
   },
-  images: [
-    {
-      url: String,
-      isPrimary: { type: Boolean, default: false },
-    },
-  ],
+  images: {
+    type: [String], // Array of strings
+    required: true,
+    default: [],
+  },
   artisan: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
