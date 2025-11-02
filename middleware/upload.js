@@ -27,10 +27,14 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+const multer = require("multer");
+const { storage } = require("../config/cloudinary");
+
 const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
 });
 
 module.exports = upload;
