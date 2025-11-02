@@ -22,26 +22,49 @@ router.get("/:id", getProductById);
 // POST - Create product with MULTIPLE images
 router.post("/", protect, upload.array("images", 5), async (req, res) => {
   try {
+    console.log("📦 Request body:", req.body);
+    console.log("📸 Files received:", req.files);
+
     const { name, description, price, category, stock } = req.body;
+
+    // Validate required fields
+    if (!name || !description || !price || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
+    }
 
     // Get Cloudinary URLs for ALL uploaded images
     const imageUrls = req.files ? req.files.map((file) => file.path) : [];
 
+    console.log("🖼️ Image URLs:", imageUrls);
+
     const product = new Product({
       name,
       description,
-      price,
+      price: Number(price),
       category,
-      stock,
-      images: imageUrls, // Array of Cloudinary URLs
+      stock: Number(stock) || 0,
+      images: imageUrls,
       artisan: req.user.id,
     });
 
     await product.save();
+
+    console.log("✅ Product saved:", product);
+
     res.status(201).json({ success: true, data: product });
   } catch (error) {
-    console.error("Error creating product:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("❌ Error creating product:");
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Full error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
   }
 });
 
